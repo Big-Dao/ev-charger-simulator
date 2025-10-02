@@ -171,6 +171,7 @@ pub async fn initialize_from_file(manager: Arc<ChargerManager>) -> Result<(), St
 }
 
 fn locate_config_file() -> Option<PathBuf> {
+    // 1. 检查环境变量
     if let Ok(path) = std::env::var("CHARGER_CONFIG_PATH") {
         let candidate = PathBuf::from(path);
         if candidate.exists() {
@@ -178,6 +179,25 @@ fn locate_config_file() -> Option<PathBuf> {
         }
     }
 
+    // 2. 尝试应用数据目录（生产环境）
+    if let Some(app_data_dir) = get_app_data_dir() {
+        let candidate = app_data_dir.join("config").join("chargers.json");
+        if candidate.exists() {
+            return Some(candidate);
+        }
+    }
+
+    // 3. 尝试可执行文件所在目录（便携模式）
+    if let Ok(exe_path) = std::env::current_exe() {
+        if let Some(exe_dir) = exe_path.parent() {
+            let candidate = exe_dir.join("config").join("chargers.json");
+            if candidate.exists() {
+                return Some(candidate);
+            }
+        }
+    }
+
+    // 4. 尝试当前工作目录（开发模式）
     let candidates = [
         PathBuf::from("config/chargers.json"),
         PathBuf::from("../config/chargers.json"),
@@ -193,6 +213,41 @@ fn locate_config_file() -> Option<PathBuf> {
     None
 }
 
+/// 获取应用数据目录
+fn get_app_data_dir() -> Option<PathBuf> {
+    #[cfg(target_os = "windows")]
+    {
+        std::env::var("APPDATA")
+            .ok()
+            .map(|appdata| PathBuf::from(appdata).join("com.evcharger.simulator"))
+    }
+    
+    #[cfg(target_os = "macos")]
+    {
+        std::env::var("HOME")
+            .ok()
+            .map(|home| PathBuf::from(home).join("Library/Application Support/com.evcharger.simulator"))
+    }
+    
+    #[cfg(target_os = "linux")]
+    {
+        std::env::var("HOME")
+            .ok()
+            .map(|home| PathBuf::from(home).join(".local/share/com.evcharger.simulator"))
+    }
+}
+
+/// 获取默认配置文件路径
+fn get_default_config_path() -> PathBuf {
+    // 生产环境：使用应用数据目录
+    if let Some(app_data_dir) = get_app_data_dir() {
+        return app_data_dir.join("config").join("chargers.json");
+    }
+    
+    // 开发环境：使用当前目录
+    PathBuf::from("config/chargers.json")
+}
+
 fn clean_path(path: PathBuf) -> PathBuf {
     if path.is_absolute() {
         path
@@ -206,9 +261,13 @@ fn clean_path(path: PathBuf) -> PathBuf {
 
 /// 保存充电桩配置到文件
 pub async fn save_to_file(manager: Arc<ChargerManager>) -> Result<(), String> {
-    let config_path = locate_config_file()
-        .or_else(|| Some(PathBuf::from("config/chargers.json")))
-        .unwrap();
+    // 确定配置文件路径，优先使用已存在的位置
+    let config_path = if let Some(existing_path) = locate_config_file() {
+        existing_path
+    } else {
+        // 如果没有现有配置，使用应用数据目录（生产环境）或当前目录（开发环境）
+        get_default_config_path()
+    };
 
     // 确保配置目录存在
     if let Some(parent) = config_path.parent() {
