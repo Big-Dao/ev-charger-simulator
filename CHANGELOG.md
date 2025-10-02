@@ -7,6 +7,43 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.8.3] - 2025-10-02
+
+### 🔧 Fixed - 功能修复
+
+**预设脚本加载失败问题** (Medium)
+- 修复生产环境中"加载预设脚本失败"的错误
+- 根本原因：前端使用动态导入 `import()` 无法在 Tauri 生产环境中访问项目外文件
+- 解决方案：
+  - 后端添加 Tauri 命令 `get_preset_scripts()` 和 `read_preset_script()`
+  - 使用 `include_str!()` 宏在编译时将脚本嵌入可执行文件
+  - 前端使用 `invoke()` 调用后端命令加载脚本
+  - 动态加载预设脚本列表（支持扩展）
+- **影响**: 用户现可在生产环境正常使用预设脚本功能（basic_test.js, normal_charging.js, fast_charging.js, fault_test.js）
+
+### 🎯 Improved - 改进
+
+**预设脚本系统**
+- ✅ 脚本编译时嵌入，无需外部文件
+- ✅ 加载速度更快（无 I/O 操作）
+- ✅ 更安全（脚本内容不可修改）
+- ✅ 易于维护（添加新脚本只需修改后端代码）
+
+### 📚 Documentation - 文档更新
+
+- 添加 `PRESET_SCRIPT_FIX.md` - 预设脚本修复详细说明（200+ 行）
+- 添加 `TEST_PRESET_SCRIPT.md` - 预设脚本测试指南（150+ 行）
+- 添加 `PRESET_SCRIPT_FIX_SUMMARY.md` - 完整修复总结（400+ 行）
+
+### 🛠️ Technical - 技术细节
+
+**新增文件**:
+- `src-tauri/src/commands.rs` - 添加 `PresetScript` 结构体和相关命令（58 行）
+- 修改 `src-tauri/src/main.rs` - 注册新命令（2 行）
+- 修改 `src/App.vue` - 使用 Tauri 命令加载脚本（35 行）
+
+---
+
 ## [0.8.2] - 2025-10-02
 
 ### 🔥 Fixed - 关键问题修复
