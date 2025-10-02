@@ -34,7 +34,7 @@ Write-Host "✓ 构建产物验证通过`n" -ForegroundColor Green
 
 # 步骤 4: 构建 Tauri 应用
 Write-Host "[4/5] 构建 Tauri 应用..." -ForegroundColor Yellow
-npm run tauri:build -- --no-bundle
+npm run tauri:build
 if ($LASTEXITCODE -ne 0) {
     Write-Host "✗ Tauri 构建失败" -ForegroundColor Red
     exit 1
