@@ -10,6 +10,15 @@
       "enabled": true
     },
     {
+      "id": "CP000005",
+      "name": "5号充电桩",
+      "protocol_type": "OCPP",
+      "server_url": "ws://localhost:8080/ocpp",
+      "max_power": 90.0,
+      "script_path": "scripts/basic_test.js",
+      "enabled": true
+    },
+    {
       "id": "CP000002",
       "name": "2号充电桩",
       "protocol_type": "OCPP",
@@ -19,12 +28,12 @@
       "enabled": true
     },
     {
-      "id": "CP000005",
-      "name": "5号充电桩",
+      "id": "CP000001",
+      "name": "1号充电桩",
       "protocol_type": "OCPP",
       "server_url": "ws://localhost:8080/ocpp",
-      "max_power": 90.0,
-      "script_path": "scripts/basic_test.js",
+      "max_power": 60.0,
+      "script_path": null,
       "enabled": true
     }
   ],

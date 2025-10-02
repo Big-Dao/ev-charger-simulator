@@ -7,6 +7,61 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.8.2] - 2025-10-02
+
+### 🔥 Fixed - 关键问题修复
+
+**🔴 安装版本白屏问题** (Critical)
+- 移除 `index.html` 中导致资源加载失败的 `vite.svg` 引用
+- 简化 Vite 构建配置，禁用代码分割（`manualChunks: undefined`）
+- 所有前端代码打包成单个 JS 文件（~1MB）以提高加载可靠性
+- 设置 `base: './'` 确保资源使用相对路径
+- 禁用 CSP 限制避免资源加载被阻止
+- **影响**: 修复后应用窗口正常显示，UI 完整加载
+
+**🔴 配置持久化失败问题** (Critical)
+- 配置文件现在保存到用户应用数据目录（而非应用安装目录）
+  - Windows: `%APPDATA%\com.evcharger.simulator\config\chargers.json`
+  - macOS: `~/Library/Application Support/com.evcharger.simulator/config/chargers.json`
+  - Linux: `~/.local/share/com.evcharger.simulator/config/chargers.json`
+- 实现配置文件查找优先级机制
+  1. 环境变量 `CHARGER_CONFIG_PATH`（自定义路径）
+  2. 应用数据目录（生产环境默认）
+  3. 可执行文件目录（便携模式）
+  4. 当前工作目录（开发模式）
+- 添加、修改、删除充电桩后立即保存配置
+- 自动创建配置目录和父目录
+- 添加配置文件路径日志记录
+- **影响**: 充电桩配置在重启后正确保留，不再丢失数据
+
+### 📚 Documentation - 文档更新
+
+- 添加 `CONFIG_PERSISTENCE_FIX.md` - 配置持久化修复详细说明
+- 添加 `WHITSCREEN_FINAL_FIX.md` - 白屏问题最终修复方案
+- 添加 `docs/CONFIG_LOCATION.md` - 配置文件位置用户指南
+- 添加 `RELEASE_v0.8.2_SUMMARY.md` - 发布总结和测试报告
+
+### 🧪 Testing - 测试改进
+
+- 添加 `test-whitscreen-fix.ps1` - 白屏修复自动化测试脚本
+- 添加 `test-config-persistence.ps1` - 配置持久化自动化测试脚本
+- 测试结果：✅ 白屏问题已解决，✅ 配置持久化正常工作
+
+### 🛠️ Technical - 技术细节
+
+**修改的文件**:
+- `vite.config.ts` - 禁用代码分割，使用相对路径
+- `index.html` - 移除不存在的资源引用
+- `src-tauri/src/config_loader.rs` - 重构配置路径逻辑，使用应用数据目录
+- `src-tauri/tauri.conf.json` - 禁用 CSP 限制
+
+**构建产物变化**:
+- 之前：13 个 JS 文件（代码分割）
+- 现在：1 个 JS 文件（1014 KB，单文件加载）
+- 应用大小：44.62 MB（不变）
+
+---
+
 ## [0.8.0] - 2025-10-02
 
 🎉 **首个正式发布版本**
