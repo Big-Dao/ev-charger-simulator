@@ -1,0 +1,42 @@
+{
+  "chargers": [
+    {
+      "id": "CP000004",
+      "name": "4号充电桩",
+      "protocol_type": "OCPP",
+      "server_url": "ws://localhost:8080/ocpp",
+      "max_power": 80.0,
+      "script_path": "scripts/fault_test.js",
+      "enabled": true
+    },
+    {
+      "id": "CP000002",
+      "name": "2号充电桩",
+      "protocol_type": "OCPP",
+      "server_url": "ws://localhost:8080/ocpp",
+      "max_power": 120.0,
+      "script_path": "scripts/fast_charging.js",
+      "enabled": true
+    },
+    {
+      "id": "CP000005",
+      "name": "5号充电桩",
+      "protocol_type": "OCPP",
+      "server_url": "ws://localhost:8080/ocpp",
+      "max_power": 90.0,
+      "script_path": "scripts/basic_test.js",
+      "enabled": true
+    }
+  ],
+  "batch_config": {
+    "count": 0,
+    "protocol_type": "OCPP",
+    "server_url": "ws://localhost:8080/ocpp",
+    "max_power": 60.0,
+    "script_path": null,
+    "enabled": false,
+    "name_prefix": "充电桩",
+    "id_prefix": "CP",
+    "start_index": 1
+  }
+}

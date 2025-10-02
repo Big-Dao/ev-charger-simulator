@@ -1,0 +1,37 @@
+[package]
+name = "ev-charger-simulator"
+version = "0.1.0"
+description = "Electric Vehicle Charger Simulator"
+authors = ["you"]
+license = ""
+repository = ""
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[build-dependencies]
+tauri-build = { version = "1.5", features = ["codegen"] }
+
+[dependencies]
+tauri = { version = "1.5", features = ["shell-open"] }
+tauri-plugin-window-state = { version = "0.1" }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+tokio = { version = "1.40", features = ["full"] }
+tokio-tungstenite = { version = "0.21", features = ["native-tls"] }
+futures-util = "0.3"
+uuid = { version = "1.6", features = ["v4", "serde"] }
+chrono = { version = "0.4", features = ["serde"] }
+anyhow = "1.0"
+thiserror = "1.0"
+tracing = "0.1"
+tracing-subscriber = "0.3"
+parking_lot = "0.12"
+async-trait = "0.1"
+rand = "0.8"
+deno_core = "0.320"
+
+[features]
+# this feature is used for production builds or when `devPath` points to the filesystem
+# DO NOT REMOVE!!
+custom-protocol = ["tauri/custom-protocol"]
