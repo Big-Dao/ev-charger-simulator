@@ -6,14 +6,28 @@
 
 ```
 docs/
-├── README.md                    # 本文件 - 文档索引
-├── OCPP_IMPLEMENTATION.md       # OCPP 协议实现文档
-├── SCRIPT_API.md                # 脚本 API 文档
-├── UI_NEXT_STEPS.md             # UI 开发计划
-├── releases/                    # 版本发布文档
-├── fixes/                       # 问题修复文档
-└── guides/                      # 开发指南文档
+├── README.md                    # 本文件 - 文档导航索引
+├── .gitignore                   # 文档目录的 Git 忽略规则
+│
+├── 📖 核心技术文档（根目录）
+│   ├── OCPP_IMPLEMENTATION.md   # OCPP 1.6J 协议实现详解
+│   └── SCRIPT_API.md            # JavaScript 脚本 API 参考
+│
+├── 🚀 releases/                 # 版本发布文档
+├── 🔧 fixes/                    # 问题修复文档
+└── 📖 guides/                   # 开发指南文档
 ```
+
+### 核心技术文档说明
+
+docs/ 根目录只保留**最核心**的技术文档，这些文档：
+- ✅ 经常被开发者和用户查阅
+- ✅ 内容稳定，不频繁变更
+- ✅ 属于项目的核心知识
+
+**当前保留**：
+- `OCPP_IMPLEMENTATION.md` - OCPP 协议实现（核心功能）
+- `SCRIPT_API.md` - 脚本 API 参考（用户必读）
 
 ---
 
@@ -76,6 +90,14 @@ docs/
 ### 开发环境
 - `SETUP.md` - 开发环境搭建指南
 - `PROBLEMS_FIXED.md` - 已修复问题汇总
+
+### 用户指南
+- `CONFIG_LOCATION.md` - 配置文件位置说明（用户必读）
+- `UI_NEXT_STEPS.md` - UI 功能开发计划
+
+### 项目管理
+- `DOCS_REORGANIZATION.md` - 文档重组总结
+- `PROJECT_CLEANUP_SUMMARY.md` - 项目清理总结
 
 ---
 
