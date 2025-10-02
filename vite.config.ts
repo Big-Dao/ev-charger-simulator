@@ -56,8 +56,9 @@ export default defineConfig({
 
   // 构建优化
   build: {
-    target: 'esnext',
+    target: ['es2020', 'edge88', 'firefox78', 'chrome87', 'safari13'],
     minify: 'esbuild',
+    sourcemap: false,
     rollupOptions: {
       output: {
         manualChunks(id) {
