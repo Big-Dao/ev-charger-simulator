@@ -9,6 +9,9 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  // 修复 Tauri 生产构建白屏问题
+  base: './',
+  
   plugins: [
     vue(),
     Components({
