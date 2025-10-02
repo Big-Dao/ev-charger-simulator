@@ -55,6 +55,9 @@ fn main() {
             commands::clear_charger_script,
             commands::start_charger_script,
             commands::stop_charger_script,
+            // 预设脚本命令
+            commands::get_preset_scripts,
+            commands::read_preset_script,
         ])
         .manage(manager)
         .manage(script_engine)

@@ -424,3 +424,54 @@ async fn stop_charger_script_internal(
 
     result
 }
+
+// ==================== 预设脚本 Commands ====================
+
+/// 预设脚本信息
+#[derive(Debug, Serialize, Deserialize)]
+pub struct PresetScript {
+    pub key: String,
+    pub name: String,
+    pub description: String,
+}
+
+/// 获取预设脚本列表
+#[tauri::command]
+pub fn get_preset_scripts() -> Result<Vec<PresetScript>, String> {
+    Ok(vec![
+        PresetScript {
+            key: "basic_test".to_string(),
+            name: "basic_test.js".to_string(),
+            description: "基础测试脚本 - 验证脚本引擎的所有功能".to_string(),
+        },
+        PresetScript {
+            key: "normal_charging".to_string(),
+            name: "normal_charging.js".to_string(),
+            description: "正常充电流程 - 模拟完整的充电流程".to_string(),
+        },
+        PresetScript {
+            key: "fast_charging".to_string(),
+            name: "fast_charging.js".to_string(),
+            description: "快速充电流程 - 模拟快充场景".to_string(),
+        },
+        PresetScript {
+            key: "fault_test".to_string(),
+            name: "fault_test.js".to_string(),
+            description: "故障测试脚本 - 模拟充电桩故障情况".to_string(),
+        },
+    ])
+}
+
+/// 读取预设脚本内容
+#[tauri::command]
+pub fn read_preset_script(script_key: String) -> Result<String, String> {
+    let script_content = match script_key.as_str() {
+        "basic_test" => include_str!("../../scripts/basic_test.js"),
+        "normal_charging" => include_str!("../../scripts/normal_charging.js"),
+        "fast_charging" => include_str!("../../scripts/fast_charging.js"),
+        "fault_test" => include_str!("../../scripts/fault_test.js"),
+        _ => return Err(format!("Unknown preset script: {}", script_key)),
+    };
+    
+    Ok(script_content.to_string())
+}

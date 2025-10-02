@@ -453,17 +453,12 @@
             <a-select-option value="">
               <em>自定义脚本</em>
             </a-select-option>
-            <a-select-option value="basic_test">
-              <FileTextOutlined /> basic_test.js - 基础功能测试
-            </a-select-option>
-            <a-select-option value="normal_charging">
-              <FileTextOutlined /> normal_charging.js - 正常充电流程
-            </a-select-option>
-            <a-select-option value="fast_charging">
-              <FileTextOutlined /> fast_charging.js - 快速充电流程
-            </a-select-option>
-            <a-select-option value="fault_test">
-              <FileTextOutlined /> fault_test.js - 故障测试
+            <a-select-option 
+              v-for="preset in presetScripts" 
+              :key="preset.key" 
+              :value="preset.key"
+            >
+              <FileTextOutlined /> {{ preset.name }} - {{ preset.description }}
             </a-select-option>
           </a-select>
         </a-form-item>
@@ -1208,24 +1203,27 @@ const openScriptConfig = (charger: ChargerStateView) => {
   };
 };
 
-const presetScripts: Record<string, { name: string; path: string }> = {
-  basic_test: {
-    name: 'basic_test.js',
-    path: '../scripts/basic_test.js',
-  },
-  normal_charging: {
-    name: 'normal_charging.js',
-    path: '../scripts/normal_charging.js',
-  },
-  fast_charging: {
-    name: 'fast_charging.js',
-    path: '../scripts/fast_charging.js',
-  },
-  fault_test: {
-    name: 'fault_test.js',
-    path: '../scripts/fault_test.js',
-  },
+interface PresetScript {
+  key: string;
+  name: string;
+  description: string;
+}
+
+const presetScripts = ref<PresetScript[]>([]);
+
+// 加载预设脚本列表
+const loadPresetScriptList = async () => {
+  try {
+    presetScripts.value = await invoke<PresetScript[]>('get_preset_scripts');
+  } catch (error) {
+    console.error('加载预设脚本列表失败:', error);
+  }
 };
+
+// 在组件挂载时加载预设脚本列表
+onMounted(() => {
+  loadPresetScriptList();
+});
 
 const loadPresetScript = async (presetKey: string) => {
   if (!presetKey) {
@@ -1234,16 +1232,15 @@ const loadPresetScript = async (presetKey: string) => {
     return;
   }
 
-  const preset = presetScripts[presetKey];
-  if (!preset) return;
-
   try {
-    const module = await import(/* @vite-ignore */ preset.path + '?raw');
-    scriptForm.value.code = module.default;
-    scriptForm.value.name = preset.name;
-    message.success(`已加载脚本: ${preset.name}`);
+    const scriptCode = await invoke<string>('read_preset_script', { scriptKey: presetKey });
+    const preset = presetScripts.value.find(p => p.key === presetKey);
+    
+    scriptForm.value.code = scriptCode;
+    scriptForm.value.name = preset?.name || `${presetKey}.js`;
+    message.success(`已加载脚本: ${preset?.name || presetKey}`);
   } catch (error) {
-    message.error(`加载脚本失败: ${errorMessage(error)}`);
+    message.error(`加载预设脚本失败: ${errorMessage(error)}`);
   }
 };
 
