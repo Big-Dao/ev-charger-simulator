@@ -1,0 +1,18 @@
+# .gitignore 文档管理规则
+
+## 临时文档（不提交）
+docs/drafts/
+docs/temp/
+docs/**/*_DRAFT.md
+docs/**/*_TODO.md
+
+## 个人笔记（不提交）
+docs/notes/
+docs/**/*_PERSONAL.md
+
+## 自动生成的文档（不提交）
+docs/api/generated/
+
+## 文档构建输出（不提交）
+docs/.vitepress/dist/
+docs/.vitepress/cache/
