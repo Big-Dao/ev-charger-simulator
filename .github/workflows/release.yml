@@ -1,0 +1,83 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+jobs:
+  build-and-release:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - platform: 'windows-latest'
+            args: '--target x86_64-pc-windows-msvc'
+
+    runs-on: ${{ matrix.platform }}
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install Rust stable
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          toolchain: stable
+          targets: x86_64-pc-windows-msvc
+
+      - name: Rust cache
+        uses: swatinem/rust-cache@v2
+        with:
+          workspaces: './src-tauri -> target'
+
+      - name: Install frontend dependencies
+        run: npm ci
+
+      - name: Build frontend
+        run: npm run build
+
+      - name: Build Tauri app
+        uses: tauri-apps/tauri-action@v0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tagName: ${{ github.ref_name }}
+          releaseName: '${{ github.ref_name }} - EV Charger Simulator'
+          releaseBody: |
+            ## 🚀 自动发布
+
+            版本: ${{ github.ref_name }}
+            提交: ${{ github.sha }}
+            
+            ### 📦 安装包
+            
+            请从下方 Assets 区域下载对应的安装包：
+            - **Windows MSI** (推荐) - 标准 Windows 安装程序
+            - **Windows NSIS** - 轻量级安装程序
+            
+            ### 📚 文档
+            
+            - [完整变更日志](https://github.com/${{ github.repository }}/blob/master/CHANGELOG.md)
+            - [用户指南](https://github.com/${{ github.repository }}/blob/master/README.md)
+            - [文档中心](https://github.com/${{ github.repository }}/blob/master/docs/README.md)
+            
+            ### 💡 快速开始
+            
+            1. 下载并安装 MSI 安装包
+            2. 从开始菜单启动应用
+            3. 添加充电桩并选择预设脚本
+            4. 点击启动开始模拟
+            
+            ---
+            
+            **系统要求**: Windows 10/11 (64位) + WebView2 Runtime
+          releaseDraft: false
+          prerelease: false
+          args: ${{ matrix.args }}
